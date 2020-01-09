@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="MICRO_SERVICE_HOME">.</Property>
+        <Property name="DEFAULT_PATTERN">%highlight{[%-5level]} %style{[%date{ISO8601}] [%t] [%c{1}]}{Magenta} %msg %n
+        </Property>
+        <!-- DEFAULT log path if not specified as parameter: -D LOG_PATH -->
+        <Property name="LOG_PATH">${sys:MICRO_SERVICE_HOME}/logs</Property>
+        <Property name="LOG_JSON">${sys:LOG_PATH}/stdout.json</Property>
+        <Property name="LOG_JSON_GZIP">${sys:LOG_PATH}/stdout-%d{yyyy-MM-dd}-%i.log.gz</Property>
+        <!-- to be indexed -->
+        <Property name="LOG_FILE">${sys:LOG_PATH}/application.log</Property>
+        <Property name="LOG_FILE_GZIP">${sys:LOG_PATH}/application-%d{yyyy-MM-dd}-%i.log.gz</Property>
+    </Properties>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+        </Console>
+        <RollingRandomAccessFile name="FILE" fileName="${sys:LOG_FILE}" filePattern="${sys:LOG_FILE_GZIP}">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="JSON" fileName="${sys:LOG_JSON}" filePattern="${sys:LOG_JSON_GZIP}">
+            <JSONLayout compact="true" eventEol="true"/>
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="br.com.brainweb" level="INFO"/>
+        <Root level="INFO" includeLocation="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="JSON"/>
+            <AppenderRef ref="FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>
