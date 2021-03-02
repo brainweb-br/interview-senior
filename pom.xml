@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <name>brainweb-interview</name>
-    <description>Junior interview project.</description>
+    <description>Senior interview project.</description>
 
     <licenses>
         <license>
