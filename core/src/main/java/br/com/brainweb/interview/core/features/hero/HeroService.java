@@ -56,6 +56,21 @@ public class HeroService {
         return all.stream().map(this::transformEntityToDto).collect(Collectors.toList());
     }
 
+    public HeroDTO update(UUID id, HeroDTO heroDTO) {
+        LocalDateTime now = LocalDateTime.now();
+        Optional<Hero> byId = repository.findById(id);
+        if (byId.isEmpty()) {
+            return null;
+        }
+        heroDTO.setUpdatedAt(now);
+        Hero hero = transformDtoToEntity(heroDTO);
+        Hero saved = repository.save(hero);
+        logger.info("Updated: " + saved.toString());
+        return transformEntityToDto(saved);
+    }
+
+
+
     public HeroDTO transformEntityToDto(Hero saved) {
         logger.info("Transforming hero to Entity - " + saved.toString());
         return HeroDTO.builder()

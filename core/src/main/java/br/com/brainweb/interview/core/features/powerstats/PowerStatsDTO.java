@@ -2,6 +2,10 @@ package br.com.brainweb.interview.core.features.powerstats;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +72,8 @@ public class PowerStatsDTO {
             value = "Data de criação")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     @JsonProperty("createdAt")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
 
     @ApiModelProperty(
@@ -76,5 +82,7 @@ public class PowerStatsDTO {
             value = "Data de última atualização")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     @JsonProperty("updatedAt")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedAt;
 }

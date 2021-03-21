@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,5 +47,14 @@ public class HeroController {
         logger.info("get all by filter: " + name);
         List<HeroDTO> all = heroService.getAll(name);
         return new ResponseEntity(all, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable UUID id, @RequestBody HeroDTO hero) {
+        logger.info("Update: " + hero);
+        HeroDTO heroSaved = heroService.update(id, hero);
+        if (heroSaved == null)
+            return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(hero, HttpStatus.OK);
     }
 }
