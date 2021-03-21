@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,5 +57,14 @@ public class HeroController {
         if (heroSaved == null)
             return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
         return new ResponseEntity(hero, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable UUID id) {
+        logger.info("Delete: " + id);
+        HeroDTO heroDeleted = heroService.delete(id);
+        if (heroDeleted == null)
+            return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

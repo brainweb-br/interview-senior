@@ -23,6 +23,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -226,6 +227,50 @@ public class HeroControllerTest {
         mvc.perform(put("/api/v1/hero/" + UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
+                .andExpect(jsonPath("$", is("Herói não encontrado")));
+    }
+
+    @Test
+    public void testShouldDelete() throws Exception {
+        HeroDTO fullHeroDto = getFullHeroDto();
+        String json = getObjectJson(fullHeroDto);
+        MvcResult mvcResult = mvc.perform(post("/api/v1/hero")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", notNullValue())).andReturn();
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        HeroDTO heroDTO = mapper.readValue(contentAsString, HeroDTO.class);
+
+        mvc.perform(get("/api/v1/hero/" + heroDTO.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name", is(fullHeroDto.getName())))
+                .andExpect(jsonPath("$.race", is(fullHeroDto.getRace().toString())))
+                .andExpect(jsonPath("$.id", is(heroDTO.getId().toString())));
+
+        mvc.perform(delete("/api/v1/hero/" + heroDTO.getId()))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        mvc.perform(get("/api/v1/hero/" + heroDTO.getId()))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
+                .andExpect(jsonPath("$", is("Herói não encontrado")));
+    }
+
+    @Test
+    public void testShouldReturn404IfNotFoundWhenDeleting() throws Exception {
+        mvc.perform(delete("/api/v1/hero/" + UUID.randomUUID()))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))

@@ -69,7 +69,14 @@ public class HeroService {
         return transformEntityToDto(saved);
     }
 
-
+    public HeroDTO delete(UUID id) {
+        Optional<Hero> byId = repository.findById(id);
+        if (byId.isEmpty()) {
+            return null;
+        }
+        repository.deleteById(id);
+        return transformEntityToDto(byId.get());
+    }
 
     public HeroDTO transformEntityToDto(Hero saved) {
         logger.info("Transforming hero to Entity - " + saved.toString());
