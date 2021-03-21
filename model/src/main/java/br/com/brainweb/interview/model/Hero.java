@@ -51,7 +51,7 @@ public class Hero {
     private PowerStats powerStats;
 
     @NotNull
-    private boolean enabled;
+    private Boolean enabled;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

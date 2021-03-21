@@ -1,18 +1,21 @@
 package br.com.brainweb.interview.core.features.hero;
 
-import br.com.brainweb.interview.core.features.powerstats.PowerStatsRepository;
 import br.com.brainweb.interview.core.features.powerstats.PowerStatsService;
 import br.com.brainweb.interview.model.Hero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
 
 @Service
 public class HeroService {
@@ -42,13 +45,24 @@ public class HeroService {
         return transformEntityToDto(byId.get());
     }
 
+    public List<HeroDTO> getAll(String name) {
+        Hero hero = Hero.builder().name(name).build();
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnoreCase();
+
+        List<Hero> all = repository.findAll(Example.of(hero, matcher));
+        logger.info("Quantity found: " + all.size());
+        return all.stream().map(this::transformEntityToDto).collect(Collectors.toList());
+    }
+
     public HeroDTO transformEntityToDto(Hero saved) {
         logger.info("Transforming hero to Entity - " + saved.toString());
         return HeroDTO.builder()
                 .id(saved.getId())
                 .name(saved.getName())
                 .race(saved.getRace())
-                .enabled(saved.isEnabled())
+                .enabled(saved.getEnabled())
                 .powerStats(powerStatsService.transformEntityToDto(saved.getPowerStats()))
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())

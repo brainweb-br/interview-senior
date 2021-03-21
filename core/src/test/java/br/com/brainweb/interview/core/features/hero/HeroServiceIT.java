@@ -80,7 +80,7 @@ public class HeroServiceIT {
         assertEquals(heroId, hero.getId());
         assertEquals(name, hero.getName());
         assertEquals(race, hero.getRace());
-        assertTrue(hero.isEnabled());
+        assertTrue(hero.getEnabled());
         assertEquals(now, hero.getCreatedAt());
         assertEquals(now, hero.getUpdatedAt());
         PowerStats powerStats1 = hero.getPowerStats();

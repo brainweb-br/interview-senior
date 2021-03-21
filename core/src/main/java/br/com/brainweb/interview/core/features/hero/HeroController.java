@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -38,5 +39,12 @@ public class HeroController {
         if (hero == null)
             return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
         return new ResponseEntity(hero, HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    public ResponseEntity getAll(@RequestParam(required = false) String name) {
+        logger.info("get all by filter: " + name);
+        List<HeroDTO> all = heroService.getAll(name);
+        return new ResponseEntity(all, HttpStatus.OK);
     }
 }

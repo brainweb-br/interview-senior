@@ -18,13 +18,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Map;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -44,7 +44,9 @@ public class HeroControllerTest {
 
     @Test
     public void createHero() throws Exception {
-        String json = getObjectJson(getFullHeroDto());
+        HeroDTO fullHeroDto = getFullHeroDto();
+        fullHeroDto.setName("Spider-man");
+        String json = getObjectJson(fullHeroDto);
         mvc.perform(post("/api/v1/hero")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -108,6 +110,68 @@ public class HeroControllerTest {
                 .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
                 .andExpect(jsonPath("$", is("Herói não encontrado")));
 
+    }
+
+    @Test
+    public void testShouldListAllHeroes() throws Exception {
+        HeroDTO fullHeroDto = getFullHeroDto();
+        fullHeroDto.setName("Wonder-woman");
+        String json = getObjectJson(fullHeroDto);
+        mvc.perform(post("/api/v1/hero")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", notNullValue()));
+        mvc.perform(get("/api/v1/hero"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    public void testShouldFilterByNameHeroes() throws Exception {
+        HeroDTO fullHeroDto = getFullHeroDto();
+        fullHeroDto.setName("Birdman");
+        String json = getObjectJson(fullHeroDto);
+        mvc.perform(post("/api/v1/hero")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", notNullValue()));
+        mvc.perform(get("/api/v1/hero?name=bird"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    public void testShouldBringEmptyHeroList() throws Exception {
+        HeroDTO fullHeroDto = getFullHeroDto();
+        fullHeroDto.setName("Birdwoman");
+        String json = getObjectJson(fullHeroDto);
+        mvc.perform(post("/api/v1/hero")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", notNullValue()));
+        mvc.perform(get("/api/v1/hero"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", greaterThanOrEqualTo(1)));
+        mvc.perform(get("/api/v1/hero?name=crazyname"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(0)));
     }
 
 }

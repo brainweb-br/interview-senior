@@ -67,7 +67,7 @@ public class PowerStatsDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de criação")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    @JsonProperty("created_at")
+    @JsonProperty("createdAt")
     private LocalDateTime createdAt;
 
     @ApiModelProperty(
@@ -75,6 +75,6 @@ public class PowerStatsDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de última atualização")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    @JsonProperty("updated_at")
+    @JsonProperty("updatedAt")
     private LocalDateTime updatedAt;
 }
