@@ -6,9 +6,13 @@ import br.com.brainweb.interview.model.Hero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class HeroService {
@@ -30,8 +34,16 @@ public class HeroService {
         return transformEntityToDto(saved);
     }
 
+    public HeroDTO getById(UUID id) {
+        Optional<Hero> byId = repository.findById(id);
+        if (byId.isEmpty()) {
+            return null;
+        }
+        return transformEntityToDto(byId.get());
+    }
+
     public HeroDTO transformEntityToDto(Hero saved) {
-        logger.info("Transforming DTO to Entity - " + saved.toString());
+        logger.info("Transforming hero to Entity - " + saved.toString());
         return HeroDTO.builder()
                 .id(saved.getId())
                 .name(saved.getName())
@@ -44,7 +56,7 @@ public class HeroService {
     }
 
     public Hero transformDtoToEntity(HeroDTO heroDTO) {
-        logger.info("Transforming Entity to DTO - " + heroDTO.toString());
+        logger.info("Transforming hero to DTO - " + heroDTO.toString());
         return Hero.builder()
                 .id(heroDTO.getId())
                 .name(heroDTO.getName())

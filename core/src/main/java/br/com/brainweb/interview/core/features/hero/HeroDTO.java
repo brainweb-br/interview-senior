@@ -70,6 +70,7 @@ public class HeroDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de criação")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     @ApiModelProperty(
@@ -77,5 +78,6 @@ public class HeroDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de última atualização")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 }

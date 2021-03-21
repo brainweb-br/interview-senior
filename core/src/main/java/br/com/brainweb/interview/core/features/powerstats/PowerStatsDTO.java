@@ -1,6 +1,7 @@
 package br.com.brainweb.interview.core.features.powerstats;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Getter
@@ -64,6 +67,7 @@ public class PowerStatsDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de criação")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     @ApiModelProperty(
@@ -71,5 +75,6 @@ public class PowerStatsDTO {
             example = "2021-03-20T23:02:24.384Z",
             value = "Data de última atualização")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 }
