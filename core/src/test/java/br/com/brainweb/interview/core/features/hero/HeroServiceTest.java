@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("it")
-public class HeroServiceIT {
+public class HeroServiceTest {
     @InjectMocks
     private HeroService service;
     @Mock
