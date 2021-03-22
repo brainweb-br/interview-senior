@@ -16,6 +16,7 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Builder
-public class PowerStatsDTO {
+public class PowerStatsDTO implements Serializable {
 
     @ApiModelProperty(
             position = 1,

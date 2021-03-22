@@ -5,6 +5,10 @@ import br.com.brainweb.interview.model.Hero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ public class HeroService {
     @Autowired
     private PowerStatsService powerStatsService;
 
+    @CacheEvict(cacheNames = {"Hero", "Heroes"}, allEntries = true)
     public HeroDTO save(HeroDTO heroDTO) {
         LocalDateTime now = LocalDateTime.now();
         if (heroDTO.getId() == null) {
@@ -37,6 +42,7 @@ public class HeroService {
         return transformEntityToDto(saved);
     }
 
+    @Cacheable(cacheNames = "Hero", key = "#id")
     public HeroDTO getById(UUID id) {
         Optional<Hero> byId = repository.findById(id);
         if (byId.isEmpty()) {
@@ -45,6 +51,7 @@ public class HeroService {
         return transformEntityToDto(byId.get());
     }
 
+    @Cacheable(cacheNames = "Heroes", key = "#name + 'list'", unless = "#result.size() == 0")
     public List<HeroDTO> getAll(String name) {
         Hero hero = Hero.builder().name(name).build();
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -56,6 +63,11 @@ public class HeroService {
         return all.stream().map(this::transformEntityToDto).collect(Collectors.toList());
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "Heroes", allEntries = true, condition = "#result != null")
+    }, put = {
+            @CachePut(cacheNames = "Hero", key = "#id", condition = "#result != null")
+    })
     public HeroDTO update(UUID id, HeroDTO heroDTO) {
         LocalDateTime now = LocalDateTime.now();
         Optional<Hero> byId = repository.findById(id);
@@ -69,6 +81,10 @@ public class HeroService {
         return transformEntityToDto(saved);
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "Heroes", allEntries = true, condition = "#result != null"),
+            @CacheEvict(cacheNames = "Hero", key = "#id", condition = "#result != null")
+    })
     public HeroDTO delete(UUID id) {
         Optional<Hero> byId = repository.findById(id);
         if (byId.isEmpty()) {

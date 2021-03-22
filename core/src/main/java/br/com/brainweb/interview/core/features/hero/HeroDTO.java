@@ -18,6 +18,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Builder
-public class HeroDTO {
+public class HeroDTO implements Serializable {
 
     @ApiModelProperty(
             position = 1,

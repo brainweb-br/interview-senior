@@ -3,6 +3,9 @@ package br.com.brainweb.interview.core.features.hero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,15 +42,15 @@ public class HeroController {
         logger.info("Fetch by id: " + id);
         HeroDTO hero = heroService.getById(id);
         if (hero == null)
-            return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
-        return new ResponseEntity(hero, HttpStatus.OK);
+            return new ResponseEntity<>("Herói não encontrado", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(hero, HttpStatus.OK);
     }
 
     @GetMapping("")
-    public ResponseEntity getAll(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<HeroDTO>> getAll(@RequestParam(required = false) String name) {
         logger.info("get all by filter: " + name);
         List<HeroDTO> all = heroService.getAll(name);
-        return new ResponseEntity(all, HttpStatus.OK);
+        return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

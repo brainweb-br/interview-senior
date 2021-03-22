@@ -8,6 +8,26 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
+
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <myActiveProfile>dev</myActiveProfile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <myActiveProfile>docker</myActiveProfile>
+            </properties>
+        </profile>
+    </profiles>
+
     <artifactId>interview-core</artifactId>
     <packaging>jar</packaging>
 
@@ -41,6 +61,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <dependency>
