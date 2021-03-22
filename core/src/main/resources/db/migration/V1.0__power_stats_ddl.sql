@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE power_stats
 (
     id           UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),

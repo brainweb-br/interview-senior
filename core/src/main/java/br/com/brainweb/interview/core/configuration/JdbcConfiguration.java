@@ -2,6 +2,7 @@ package br.com.brainweb.interview.core.configuration;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EntityScan(basePackages = {"br.com.brainweb.interview.model"})
 public class JdbcConfiguration {
 
     @Value("${jdbc.url}")
@@ -26,12 +28,14 @@ public class JdbcConfiguration {
     @Value("${jdbc.schema}")
     private String schema;
 
+    @Value("${jdbc.driverClassName}")
+    private String driverClassName;
+
     @Bean
     public DataSource dataSource() {
 
         HikariDataSource dataSource = new HikariDataSource();
-
-        dataSource.setDriverClassName(org.postgresql.Driver.class.getName());
+        dataSource.setDriverClassName(driverClassName);
         dataSource.setJdbcUrl(jdbcUrl);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
@@ -41,7 +45,7 @@ public class JdbcConfiguration {
         return dataSource;
     }
 
-    @Bean
+    @Bean("transactionManager")
     public PlatformTransactionManager platformTransactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }

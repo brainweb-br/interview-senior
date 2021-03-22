@@ -1,0 +1,63 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=brainweb
+      - POSTGRES_USER=brainweb
+    volumes:
+      - pgtest-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - brainweb-network
+
+  api:
+    build:
+      context: "./../"
+      dockerfile: ./infra/Dockerfile.api
+    restart: unless-stopped
+    image: brainweb-hero-api
+    deploy:
+      replicas: 2
+    networks:
+      brainweb-network:
+        aliases:
+          - apps
+
+  proxy:
+    container_name: proxy-brainweb
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.proxy
+    ports:
+      - 80:80
+    networks:
+      - brainweb-network
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - 9090:9090
+    networks:
+      - brainweb-network
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - brainweb-network
+
+networks:
+  brainweb-network:
+
+volumes:
+  pgtest-data:
