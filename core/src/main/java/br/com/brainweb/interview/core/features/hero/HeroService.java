@@ -14,6 +14,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,7 +92,44 @@ public class HeroService {
             return null;
         }
         repository.deleteById(id);
+        powerStatsService.delete(byId.get().getPowerStats().getId());
         return transformEntityToDto(byId.get());
+    }
+
+    public HeroComparisonResponseDTO compare(HeroComparisonRequestDTO heroComparisonRequestDTO) {
+        HeroDTO hero1 = getById(heroComparisonRequestDTO.getHero1().getId());
+        HeroDTO hero2 = getById(heroComparisonRequestDTO.getHero2().getId());
+        if (hero1 == null || hero2 == null)
+            return null;
+        short agilityDiference = (short) (hero1.getPowerStats().getAgility() - hero2.getPowerStats().getAgility());
+        short strengthDiference = (short) (hero1.getPowerStats().getStrength() - hero2.getPowerStats().getStrength());
+        short dexterityDiference = (short) (hero1.getPowerStats().getDexterity() - hero2.getPowerStats().getDexterity());
+        short intelligenceDiference = (short) (hero1.getPowerStats().getIntelligence() - hero2.getPowerStats().getIntelligence());
+        List<Short> statsDiference = List.of(agilityDiference, strengthDiference, dexterityDiference, intelligenceDiference);
+        List<Short> positive = new ArrayList<>();
+        List<Short> negative = new ArrayList<>();
+        statsDiference.forEach(i -> {
+            if (i < 0) {
+                negative.add(i);
+            } else if (i > 0) {
+                positive.add(i);
+            }
+        });
+        HeroDTO stronger = null;
+        if (positive.size() > negative.size()) {
+            stronger = hero1;
+        } else if (negative.size() > positive.size()) {
+            stronger = hero2;
+        } else {
+            stronger = HeroDTO.builder().name("Heróis com status balanceados.").build();
+        }
+        return HeroComparisonResponseDTO.builder()
+                .strongestHero(stronger)
+                .agility(agilityDiference)
+                .strength(strengthDiference)
+                .dexterity(dexterityDiference)
+                .intelligence(intelligenceDiference)
+                .build();
     }
 
     public HeroDTO transformEntityToDto(Hero saved) {

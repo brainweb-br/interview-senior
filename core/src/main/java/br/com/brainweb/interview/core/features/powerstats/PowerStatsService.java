@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class PowerStatsService {
@@ -25,6 +26,10 @@ public class PowerStatsService {
             powerStats.setCreatedAt(now);
         }
         return repository.save(powerStats);
+    }
+
+    public void delete(UUID id) {
+        repository.deleteById(id);
     }
 
     public PowerStats transformDtoToEntity(PowerStatsDTO powerStatsDTO) {

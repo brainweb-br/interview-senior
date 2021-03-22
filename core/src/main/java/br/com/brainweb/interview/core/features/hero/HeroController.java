@@ -70,4 +70,13 @@ public class HeroController {
             return new ResponseEntity("Herói não encontrado", HttpStatus.NOT_FOUND);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/compare")
+    public ResponseEntity<HeroComparisonResponseDTO> compareHeroes(@RequestBody HeroComparisonRequestDTO heroComparisonRequestDTO) {
+        HeroComparisonResponseDTO compare = heroService.compare(heroComparisonRequestDTO);
+        if (compare == null)
+            return new ResponseEntity("Um dos heróis não foi encontrado", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(compare, HttpStatus.OK);
+    }
+
 }
